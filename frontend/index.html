@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Raksha Grid — India Hazard Zone Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="lib/leaflet.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <h1>Raksha Grid</h1>
+    <p class="subtitle">Hazard zone predictor — trained on historical weather, terrain &amp; land-cover data for every Indian state &amp; UT, live-adjusted from official bulletins</p>
+
+    <label for="stateSelect">State / UT</label>
+    <select id="stateSelect"></select>
+
+    <label for="hazardSelect">Hazard</label>
+    <select id="hazardSelect"></select>
+
+    <label>View</label>
+    <div class="mode-toggle">
+      <button id="modeHistorical" class="active">Historical</button>
+      <button id="modeForecast">6-Month Forecast</button>
+    </div>
+
+    <div id="yearBlock">
+      <label for="yearSlider">Year (1925 – present)</label>
+      <div id="yearRow">
+        <input type="range" id="yearSlider" min="1925" max="2025" step="1" value="2025">
+        <span id="yearLabel">2025</span>
+      </div>
+    </div>
+
+    <div id="monthRow">
+      <input type="range" id="monthSlider" min="0" max="5" step="1" value="0">
+      <span id="monthLabel">+1 month</span>
+    </div>
+
+    <div class="card" id="liveCard">
+      <div id="liveHeader">
+        <h3><span id="liveDot" class="live-dot"></span>Live Data Feed</h3>
+        <button id="refreshBtn">Refresh now</button>
+      </div>
+      <div id="liveInfo"><span class="empty">Connecting to backend…</span></div>
+    </div>
+
+    <div class="card">
+      <h3>Severity legend</h3>
+      <div class="legend-row"><span class="swatch" style="background:var(--safe)"></span>Safe</div>
+      <div class="legend-row"><span class="swatch" style="background:var(--low)"></span>Low</div>
+      <div class="legend-row"><span class="swatch" style="background:var(--moderate)"></span>Moderate</div>
+      <div class="legend-row"><span class="swatch" style="background:var(--severe)"></span>Severe</div>
+    </div>
+
+    <div class="card">
+      <h3>Zone summary</h3>
+      <div id="statsPanel"><span class="empty">Loading…</span></div>
+    </div>
+
+    <div class="card">
+      <h3>Selected cell</h3>
+      <div id="cellInfo"><span class="empty">Click a zone on the map to inspect it</span></div>
+    </div>
+
+    <div class="card" id="dataNote">
+      <h3>About this data</h3>
+      <p>Zones are model predictions trained on synthetic historical data standing in for real IMD / CWC / NCS / DGRE / Forest Survey feeds — see <code>disaster_ml_pipeline.py</code> for the real data source mapping. When the backend's live feed has a fresh signal for the current state+hazard (scraped from official bulletins via Firecrawl), the current year and the 6-month forecast are nudged to reflect it — look for the <span class="live-badge">LIVE</span> badge. The forecast view is a documented seasonal heuristic on top of the trained model, not a separately-trained monthly model — see <code>ml/forecast.py</code>.</p>
+    </div>
+
+    <div id="backendWarning">
+      Can't reach the Raksha Grid backend API at <code id="apiBaseShown"></code>. Start it with
+      <code>cd backend &amp;&amp; uvicorn server:app --reload --port 8001</code> — see the project README.
+    </div>
+  </div>
+  <div id="mapWrap">
+    <div id="map"></div>
+    <div id="loadingOverlay"><div class="spinner"></div><span>Loading India state boundaries…</span></div>
+  </div>
+</div>
+
+<script src="lib/leaflet.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
